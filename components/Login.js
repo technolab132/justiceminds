@@ -7,7 +7,7 @@ const Login = ({ onSuccess }) => {
     const [errorMessage, setErrorMessage] = useState("");
 
     const handleLogin = () => {
-        if (username === "jmadmin" && password === "password") {
+        if (username === "jmadmin" && password === "Jmadmin123#") {
             // Set a cookie named "isLoggedIn" with value "true"
             setCookie(null, "isLoggedIn", "true", { maxAge: 120 }); // Expires in 5 minutes
             onSuccess();
