@@ -3,7 +3,9 @@ import DetailPanel from '@/components/DetailsPanel';
 import Sidebar from '@/components/Sidebar';
 import { createClient } from '@supabase/supabase-js';
 import React, { useEffect, useState } from 'react'
-
+import Login from "../components/Login"; // Update the path
+import { setCookie } from "nookies";
+import { parse } from "cookie";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
@@ -22,10 +24,32 @@ export default function Home({ data }) {
   const [receivedEmails, setReceivedEmails] = useState([]);
   const [messages, setMessages] = useState([]);
 
+
+
+  const [isLoading, setisLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Parse the cookie after the page is mounted
+    const cookies = parse(document.cookie);
+    setIsLoggedIn(cookies.isLoggedIn === "true");
+  }, []); // Empty dependency array ensures this effect runs only once after mount
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    // Set the "isLoggedIn" cookie to expire immediately
+    setCookie(null, "isLoggedIn", "true", { maxAge: -1 });
+    setIsLoggedIn(false);
+  };
+
   const handleSelectName = async (name) => {
     const selectedRow = data.find((row) => row.Name === name);
     // const selectedRowW = sheetdata3.find((row) => row[0] === name);
     setSelectedName(selectedRow);
+    setisLoading(true)
     // console.log(selectedName);
     // console.log(selectedRow);
     // setSelectedNameWW(selectedRowW);
@@ -43,6 +67,7 @@ export default function Home({ data }) {
       .from('Chats')
       .select('*')
       .eq('Chat Session', selectedRow.Name); // Assuming 'Email' is the column name that links data between the tables
+      setisLoading(false)
 
     if (semailError) {
       console.error("sentmaail", semailError);
@@ -84,33 +109,43 @@ export default function Home({ data }) {
         ))}
       </ul>
     </div> */}
-      <div className="flex">
-        {/* Sidebar Toggle Button */}
-        <button className="p-4 text-3xl absolute" style={{ right: "6px", top: "4px", zIndex: "1000" }} onClick={toggleSidebar}>
-          =
-        </button>
+      {isLoggedIn ? (
+        <div className="flex">
+          {/* Sidebar Toggle Button */}
+          <button className="p-4 text-3xl absolute" style={{ right: "6px", top: "4px", zIndex: "1000" }} onClick={toggleSidebar}>
+            =
+          </button>
 
-        {/* Sidebar */}
-        <div className={` w-2/4 md:w-1/3 lg:w-1/4 md:flex-shrink-0 ${showSidebar ? "" : "hidden"}`}>
-          {showSidebar && <Sidebar names={filteredNames} onSelectName={handleSelectName} />}
-        </div>
+          {/* Sidebar */}
+          <div className={` w-2/4 md:w-1/3 lg:w-1/4 md:flex-shrink-0 ${showSidebar ? "" : "hidden"}`}>
+            {showSidebar && <Sidebar names={filteredNames} onSelectName={handleSelectName}/>}
+          </div>
 
-        {/* Dashboard */}
-        <div className="flex-grow md:w-2/3 lg:w-3/4">
-          {selectedName ? (
-            
-            <DetailPanel
-              selectedData={selectedName}
-              sentEmails={sentEmails}
-              receivedEmails={receivedEmails}
-              messages={messages}
-              onClose={handleCloseDetailPanel}
-            />
-          ) : (
-            <DefaultMessage />
-          )}
+          {/* Dashboard */}
+          <div className="flex-grow md:w-2/3 lg:w-3/4">
+            {selectedName ? (
+
+              <DetailPanel
+                selectedData={selectedName}
+                sentEmails={sentEmails}
+                receivedEmails={receivedEmails}
+                messages={messages}
+                onClose={handleCloseDetailPanel}
+                loading={isLoading}
+              />
+            ) : (
+              <>
+                <DefaultMessage onlogout={handleLogout} />
+                
+              </>
+
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <Login onSuccess={handleLoginSuccess} />
+      )}
+
 
     </>
   );

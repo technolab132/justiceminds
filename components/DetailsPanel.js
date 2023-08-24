@@ -1,8 +1,9 @@
 
 import React, { useState } from "react";
 import DefaultMessage from "./DefaultMessage";
+import LoadingComponent from "./LoadingComponent";
 
-const DetailPanel = ({ selectedData, sentEmails, receivedEmails,messages, onClose }) => {
+const DetailPanel = ({ selectedData, sentEmails, receivedEmails,messages, onClose, loading }) => {
   const [activeTab, setActiveTab] = useState("sent");
   const [showFullMessages, setShowFullMessages] = useState({});  // State to track if the full message should be shown
 
@@ -56,7 +57,10 @@ const DetailPanel = ({ selectedData, sentEmails, receivedEmails,messages, onClos
         <p><span style={{ color: "#adadad" }}>Date of Last Email Sent</span> : {selectedData["Date of Last Email Sent"]}</p>
       </div>
 
-      <div>
+
+      {loading?(<LoadingComponent />):(
+        <>
+        <div>
         <div style={{ borderBottom: "2px solid #424242", marginBottom: "30px" }}>
           {sentEmails.length > 0 && (
             <button style={{ padding: "30px", color: "#adadad" }} onClick={() => handleTabChange("sent")}>Sent Emails</button>
@@ -132,46 +136,12 @@ const DetailPanel = ({ selectedData, sentEmails, receivedEmails,messages, onClos
           </div>)}
 
          
-          {/* {activeTab === "sent" ? (
-            <ul className="">
-              {sentEmails.map((email, index) => (
-                <li style={{ padding: "20px", marginBottom: "20px", background: "#262626", color: "#adadad" }} key={index}>
-                  <strong style={{ color: "#fff" }}>From : </strong> {email[0]} <br />
-                  <hr style={{ margin: "30px 0px 30px 0px" }} />
-                  <strong style={{ color: "#fff" }}>Subject : </strong> {email[2]} <br />
-                  <strong style={{ color: "#fff" }}>Sent : </strong> {email[3]} <br />
-                  <strong style={{ color: "#fff" }}>Received : </strong> {email[4]} <br />
-                  <strong style={{ color: "#fff" }}>PDF : </strong> <a target="_blank" href={email[7]}>View Pdf</a> <br />
-                  <strong style={{ color: "#fff" }}>Complaint : </strong> <a target="_blank" href={email[8]}>View Complaint</a> <br />
-                  <hr style={{ margin: "30px 0px 30px 0px" }} />
-                  <strong style={{ color: "#fff" }}>Message : </strong>
-                  <div>
-                    {getEmailContent(email[6])}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <ul className="">
-              {receivedEmails.map((email, index) => (
-                <li style={{ padding: "20px", marginBottom: "20px", background: "#262626", color: "#adadad" }} key={index}>
-                  <strong style={{ color: "#fff" }}>To : </strong> {email[1]} <br />
-                  <hr style={{ margin: "30px 0px 30px 0px" }} />
-                  <strong style={{ color: "#fff" }}>Subject : </strong> {email[2]} <br />
-                  <strong style={{ color: "#fff" }}>Sent : </strong> {email[3]} <br />
-                  <strong style={{ color: "#fff" }}>Received : </strong> {email[4]} <br />
-                  <strong style={{ color: "#fff" }}>PDF : </strong> <a target="_blank" href={email[7]}>View Pdf</a> <br />
-                  <hr style={{ margin: "30px 0px 30px 0px" }} />
-                  <strong style={{ color: "#fff" }}>Message : </strong>
-                  <div>
-                    {getEmailContent(email[6])}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )} */}
+          
         </div>
       </div>
+        </>
+      )}
+      
 
 
     </div>
