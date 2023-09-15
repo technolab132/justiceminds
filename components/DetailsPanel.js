@@ -203,7 +203,7 @@ const DetailPanel = ({
                       <strong style={{ color: "#fff" }}>
                         Complaint :{" "}
                       </strong>{" "}
-                      <a target="_blank" href={email["Complaints"]}>
+                      <a target="_blank" href={email["COMPLAINTS"]}>
                         View Complaint
                       </a>{" "}
                       <br />
