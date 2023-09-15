@@ -11,14 +11,12 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export default function Home({ data }) {
+export default function Home() {
 
 
   const [selectedName, setSelectedName] = useState(null);
   // const [selectedNameWW, setSelectedNameWW] = useState(null);
   const [showSidebar, setShowSidebar] = useState(true);
-
-  const [filteredNames, setFilteredNames] = useState(data.map((row) => row.Name));
 
   const [sentEmails, setSentEmails] = useState([]);
   const [receivedEmails, setReceivedEmails] = useState([]);
@@ -27,12 +25,51 @@ export default function Home({ data }) {
 
   const [isLoading, setisLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [masterData, setMasterData] = useState([]);
 
   useEffect(() => {
     // Parse the cookie after the page is mounted
     const cookies = parse(document.cookie);
     setIsLoggedIn(cookies.isLoggedIn === "true");
   }, []); // Empty dependency array ensures this effect runs only once after mount
+
+
+  useEffect(() => {
+    // Fetch initial data from Supabase
+    const fetchData = async () => {
+      const { data, error } = await supabase.from('Clients').select('*');
+      if (error) {
+        console.error(error);
+        return;
+      }
+      setMasterData(data);
+    };
+
+    // Subscribe to real-time updates from Supabase
+    // const subscription = supabase
+    //   .from('Clients')
+    //   .on('INSERT', (payload) => {
+    //     // Handle insert event, update your data state
+    //     setData((prevData) => [...prevData, payload.new]);
+    //   })
+    //   .on('UPDATE', (payload) => {
+    //     // Handle update event, update your data state
+    //     setData((prevData) =>
+    //       prevData.map((item) =>
+    //         item.id === payload.new.id ? payload.new : item
+    //       )
+    //     );
+    //   })
+    //   .subscribe();
+
+    // // Clean up the subscription when the component unmounts
+    // return () => {
+    //   subscription.unsubscribe();
+    // };
+
+    // Fetch initial data when the component mounts
+    fetchData();
+  }, []);
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
@@ -45,7 +82,7 @@ export default function Home({ data }) {
   };
 
   const handleSelectName = async (ID) => {
-    const selectedRow = data.find((row) => row.id === ID);
+    const selectedRow = masterData.find((row) => row.id === ID);
     // const selectedRowW = sheetdata3.find((row) => row[0] === name);
     setSelectedName(selectedRow);
     setisLoading(true)
@@ -122,7 +159,7 @@ export default function Home({ data }) {
 
           {/* Sidebar */}
           <div className={` w-2/4 md:w-1/3 lg:w-1/4 md:flex-shrink-0 ${showSidebar ? "" : "hidden"}`}>
-            {showSidebar && <Sidebar data={data} onSelectName={handleSelectName}/>}
+            {showSidebar && <Sidebar data={masterData} onSelectName={handleSelectName}/>}
           </div>
 
           {/* Dashboard */}
@@ -152,21 +189,4 @@ export default function Home({ data }) {
 
     </>
   );
-}
-
-export async function getStaticProps() {
-  const { data, error } = await supabase.from('Clients').select('*')
-
-  if (error) {
-    console.error(error);
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      data,
-    },
-  };
 }
