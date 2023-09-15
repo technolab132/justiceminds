@@ -22,8 +22,7 @@ export default function Home({ data }) {
 
   const [sentEmails, setSentEmails] = useState([]);
   const [receivedEmails, setReceivedEmails] = useState([]);
-  const [messages, setMessages] = useState([]);
-
+  // const [messages, setMessages] = useState([]);
 
 
   const [isLoading, setisLoading] = useState(true);
@@ -45,8 +44,8 @@ export default function Home({ data }) {
     setIsLoggedIn(false);
   };
 
-  const handleSelectName = async (name) => {
-    const selectedRow = data.find((row) => row.Name === name);
+  const handleSelectName = async (ID) => {
+    const selectedRow = data.find((row) => row.id === ID);
     // const selectedRowW = sheetdata3.find((row) => row[0] === name);
     setSelectedName(selectedRow);
     setisLoading(true)
@@ -58,16 +57,18 @@ export default function Home({ data }) {
     const { data: SentEmails, error: semailError } = await supabase
       .from('EmailData')
       .select('*')
-      .eq('TO', selectedRow.Email); // Assuming 'Email' is the column name that links data between the tables
+      .eq('TO', selectedRow.Email);
+      
+      // Assuming 'Email' is the column name that links data between the tables
     const { data: ReceivedEmails, error: remailError } = await supabase
       .from('EmailData')
       .select('*')
       .eq('FROM', selectedRow.Email); // Assuming 'Email' is the column name that links data between the tables
-    const { data: Messages, error: messageError } = await supabase
-      .from('Chats')
-      .select('*')
-      .eq('Chat Session', selectedRow.Name); // Assuming 'Email' is the column name that links data between the tables
-      setisLoading(false)
+    // const { data: Messages, error: messageError } = await supabase
+    //   .from('Chats')
+    //   .select('*')
+    //   .eq('Chat Session', selectedRow.Name); // Assuming 'Email' is the column name that links data between the tables
+      
 
     if (semailError) {
       console.error("sentmaail", semailError);
@@ -77,14 +78,17 @@ export default function Home({ data }) {
       console.error("receivedmaail", remailError);
       return;
     }
-    if (messageError) {
-      console.error("messageerror", messageError);
-      return;
-    }
+    // if (messageError) {
+    //   console.error("messageerror", messageError);
+    //   return;
+    // }
 
     setSentEmails(SentEmails)
     setReceivedEmails(ReceivedEmails)
-    setMessages(Messages)
+    // setMessages(Messages)
+    setisLoading(false)
+
+    // console.log(sentEmails);
 
 
   };
@@ -118,7 +122,7 @@ export default function Home({ data }) {
 
           {/* Sidebar */}
           <div className={` w-2/4 md:w-1/3 lg:w-1/4 md:flex-shrink-0 ${showSidebar ? "" : "hidden"}`}>
-            {showSidebar && <Sidebar names={filteredNames} onSelectName={handleSelectName}/>}
+            {showSidebar && <Sidebar data={data} onSelectName={handleSelectName}/>}
           </div>
 
           {/* Dashboard */}
@@ -129,7 +133,6 @@ export default function Home({ data }) {
                 selectedData={selectedName}
                 sentEmails={sentEmails}
                 receivedEmails={receivedEmails}
-                messages={messages}
                 onClose={handleCloseDetailPanel}
                 loading={isLoading}
               />

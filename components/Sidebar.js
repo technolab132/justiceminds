@@ -1,11 +1,11 @@
 
 import React, {useState} from "react";
 
-const Sidebar = ({ names, onSelectName }) => {
+const Sidebar = ({ data, onSelectName }) => {
 
   const [searchTerm, setSearchTerm] = useState("");
-  const filteredNames = names.filter((name) =>
-    name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredNames = data.filter((item) =>
+    item.Name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -17,7 +17,7 @@ const Sidebar = ({ names, onSelectName }) => {
         onChange={(e) => setSearchTerm(e.target.value)}
         style={{ padding: "15px",width:"100%", background:"#000", border:"1px solid rgb(45,45,45)", marginBottom:"10px"}}
       />
-      {filteredNames.map((name, index) => (
+      {filteredNames.map((item, index) => (
         <button
           key={index}
           style={{
@@ -27,9 +27,9 @@ const Sidebar = ({ names, onSelectName }) => {
             marginBottom:"10px",
             textAlign:"left"
           }}
-          onClick={() => onSelectName(name)}
+          onClick={() => onSelectName(item.id)}
         >
-          {name}
+          {item.Name}
         </button>
       ))}
     </div>
