@@ -149,7 +149,7 @@ const DetailPanel = ({
               {sentEmails.length > 0 && (
                 <button
                   className={`${activeTab === "sent" ? "text-white bg-[#262626]" : "text-[#adadad]"}`}
-                  style={{ padding: "30px" }}
+                  style={{ padding: "15px 30px" }}
                   onClick={() => handleTabChange("sent")}
                 >
                   Sent Emails
@@ -160,7 +160,7 @@ const DetailPanel = ({
               {receivedEmails.length > 0 && (
                 <button
                 className={`${activeTab === "received" ? "text-white bg-[#262626]" : "text-[#adadad]"}`}
-                  style={{ padding: "30px" }}
+                style={{ padding: "15px 30px" }}
                   onClick={() => handleTabChange("received")}
                 >
                   Received Emails

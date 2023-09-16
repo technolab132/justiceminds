@@ -1,7 +1,7 @@
 
 import React, {useState} from "react";
 
-const Sidebar = ({ data, onSelectName }) => {
+const Sidebar = ({ data,activeNameId, onSelectName }) => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const filteredNames = data.filter((item) =>
@@ -19,10 +19,10 @@ const Sidebar = ({ data, onSelectName }) => {
       />
       {filteredNames.map((item, index) => (
         <button
+        className={`${activeNameId === item.id ? "bg-[#262626]" : "bg-[#0c0c0c] text-gray-400"}`}
           key={index}
           style={{
             padding: "20px",
-            backgroundColor:"#0e0e0e",
             width:"100%",
             marginBottom:"10px",
             textAlign:"left"
