@@ -196,7 +196,7 @@ const DetailPanel = ({
                       <strong style={{ color: "#fff" }}>
                         Received :{" "}
                       </strong>{" "}
-                      {email["RECIEVED"]} <br />
+                      {email["RECEIVED"]} <br />
                       <strong style={{ color: "#fff" }}>PDF : </strong>{" "}
                       <a target="_blank" href={email["PDFLINK"]}>
                         View Pdf
