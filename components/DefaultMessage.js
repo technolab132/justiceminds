@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React, {useState, useEffect} from 'react'
 
 const DefaultMessage = ({onlogout}) => {
@@ -30,11 +31,17 @@ const DefaultMessage = ({onlogout}) => {
         <img src="/logo 1.svg" style={{width:"50%", marginBottom:"30px", margin:"auto"}} />
         <button
                   onClick={onlogout}
-                  className=" text-white px-8 py-2 cursor-pointer"
+                  className=" text-white px-8 py-2 cursor-pointer m-5"
                   style={{ background: "#1d1d1d" }}
                 >
                   LOGOUT
                 </button>
+        <Link
+                  href={"/incidents"}
+                  className=" text-white cursor-pointer m-5"
+                >
+                  {`View Incidents  >`}
+                </Link>
         {/* <h1 style={{color:"#fff", fontSize:"50px",fontWeight:"bolder", paddingBottom:"30px"}}>JusticeMinds</h1> */}
         {/* <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>Welcome!</h1> */}
         {/* <p style={{ fontSize: "18px", color:"#adadad"}}>Select a name from the sidebar to view details.</p> */}

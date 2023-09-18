@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DefaultMessage from "./DefaultMessage";
 import LoadingComponent from "./LoadingComponent";
-
+// const axios = require("axios")
 const DetailPanel = ({
   selectedData,
   sentEmails,
@@ -11,6 +11,51 @@ const DetailPanel = ({
 }) => {
   const [activeTab, setActiveTab] = useState("sent");
   const [showFullMessages, setShowFullMessages] = useState({}); // State to track if the full message should be shown
+  
+  // const [googleDriveFileId, setGoogleDriveFileId] = useState('');
+  // const [extractedText, setExtractedText] = useState('');
+
+  // const [combinedPdfLinks, setCombinedPdfLinks] = useState([]); 
+
+  // useEffect(() => {
+  //   const combinedLinks = [
+  //     ...sentEmails?.map((email) => email.PDFLINK.match(/\/d\/([a-zA-Z0-9_-]+)\//)[1]),
+  //     ...receivedEmails?.map((email) => email.PDFLINK.match(/\/d\/([a-zA-Z0-9_-]+)\//)[1]),
+  //   ];
+  //   setCombinedPdfLinks(combinedLinks);
+  
+    
+  // }, [sentEmails, receivedEmails])
+  
+
+
+  // const handleExtractText = async () => {
+  //   try {
+  //     // let combinedText = '';
+
+  //     // for (const pdfLink of combinedPdfLinks) {
+  //     //   const googleDriveUrl = `https://drive.google.com/uc?id=${pdfLink}`;
+  
+  //     //   const response = await axios.post('/api/extract-pdf', { pdfUrl: googleDriveUrl });
+  
+  //     //   combinedText += response.data.text + '\n';
+  //     // }
+  
+  //     // setExtractedText(combinedText);
+
+
+  //     // Construct the direct download link for the Google Drive file
+  //     const googleDriveUrl = `https://drive.google.com/uc?id=${googleDriveFileId}`;
+
+  //     // // Send the Google Drive URL to the API for text extraction
+  //     const response = await axios.post('/api/extract-pdf', { pdfUrl: googleDriveUrl });
+  //     setExtractedText(response.data.text);
+  //     // console.log(combinedPdfLinks);
+  //   } catch (error) {
+  //     console.error('Error extracting text:', error);
+  //   }
+  // };
+  
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -26,25 +71,25 @@ const DetailPanel = ({
     });
   };
 
-  const getEmailContent = (email) => {
-    const showFullMessage = showFullMessages[email];
+  // const getEmailContent = (email) => {
+  //   const showFullMessage = showFullMessages[email];
 
-    if (email.length > 100) {
-      return (
-        <p>
-          {showFullMessage ? email + " " : email.substring(0, 100) + "..."}
-          <button
-            style={{ color: "#fff" }}
-            onClick={() => handleToggleMessage(email)}
-          >
-            {showFullMessage ? "Show Less" : "Show More"}
-          </button>
-        </p>
-      );
-    }
+  //   if (email.length > 100) {
+  //     return (
+  //       <p>
+  //         {showFullMessage ? email + " " : email.substring(0, 100) + "..."}
+  //         <button
+  //           style={{ color: "#fff" }}
+  //           onClick={() => handleToggleMessage(email)}
+  //         >
+  //           {showFullMessage ? "Show Less" : "Show More"}
+  //         </button>
+  //       </p>
+  //     );
+  //   }
 
-    return <p>{email}</p>;
-  };
+  //   return <p>{email}</p>;
+  // };
 
   return (
     <div style={{ lineHeight: "2rem", height: "100vh", overflowY: "scroll" }}>
