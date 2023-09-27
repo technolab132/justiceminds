@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import DefaultMessage from "./DefaultMessage";
 import LoadingComponent from "./LoadingComponent";
+import PDFViewer from "./PDFViewer";
+import { axiosRetry } from "./retryAxios"; // Import the axiosRetry function
+
 // const axios = require("axios")
 const DetailPanel = ({
   selectedData,
@@ -8,26 +11,37 @@ const DetailPanel = ({
   receivedEmails,
   onClose,
   loading,
+  extractedTexts,
+  setExtractedTexts,
+  handleExtractText,
+  loadingtext,
+  currentlyExtractingEmailIndex,
 }) => {
   const [activeTab, setActiveTab] = useState("sent");
   const [showFullMessages, setShowFullMessages] = useState({}); // State to track if the full message should be shown
-  
+  // const [loadingtext, setLoadingText] = useState(false); // State to track if
   // const [googleDriveFileId, setGoogleDriveFileId] = useState('');
   // const [extractedText, setExtractedText] = useState('');
 
-  // const [combinedPdfLinks, setCombinedPdfLinks] = useState([]); 
+  const [combinedPdfLinks, setCombinedPdfLinks] = useState([]);
 
-  // useEffect(() => {
-  //   const combinedLinks = [
-  //     ...sentEmails?.map((email) => email.PDFLINK.match(/\/d\/([a-zA-Z0-9_-]+)\//)[1]),
-  //     ...receivedEmails?.map((email) => email.PDFLINK.match(/\/d\/([a-zA-Z0-9_-]+)\//)[1]),
-  //   ];
-  //   setCombinedPdfLinks(combinedLinks);
-  
-    
-  // }, [sentEmails, receivedEmails])
-  
-
+  useEffect(() => {
+    const combinedLinks = [
+      ...sentEmails?.map(
+        (email) =>
+          `https://drive.google.com/uc?id=${
+            email.PDFLINK.match(/\/d\/([a-zA-Z0-9_-]+)\//)[1]
+          }`
+      ),
+      ...receivedEmails?.map(
+        (email) =>
+          `https://drive.google.com/uc?id=${
+            email.PDFLINK.match(/\/d\/([a-zA-Z0-9_-]+)\//)[1]
+          }`
+      ),
+    ];
+    setCombinedPdfLinks(combinedLinks);
+  }, [sentEmails, receivedEmails]);
 
   // const handleExtractText = async () => {
   //   try {
@@ -35,14 +49,13 @@ const DetailPanel = ({
 
   //     // for (const pdfLink of combinedPdfLinks) {
   //     //   const googleDriveUrl = `https://drive.google.com/uc?id=${pdfLink}`;
-  
+
   //     //   const response = await axios.post('/api/extract-pdf', { pdfUrl: googleDriveUrl });
-  
+
   //     //   combinedText += response.data.text + '\n';
   //     // }
-  
-  //     // setExtractedText(combinedText);
 
+  //     // setExtractedText(combinedText);
 
   //     // Construct the direct download link for the Google Drive file
   //     const googleDriveUrl = `https://drive.google.com/uc?id=${googleDriveFileId}`;
@@ -55,10 +68,32 @@ const DetailPanel = ({
   //     console.error('Error extracting text:', error);
   //   }
   // };
-  
+  // const handleExtractText = async (pdfLink) => {
+  //   try {
+  //     const response = await fetch('/api/extract-pdf', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ pdfUrl: pdfLink }),
+  //     });
+
+  //     if (response.ok) {
+  //       const { text } = await response.json();
+  //       setExtractedText(text);
+  //     } else {
+  //       console.error('Error extracting text:', response.statusText);
+  //       setExtractedText('Error extracting text');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error extracting text:', error);
+  //     setExtractedText('Error extracting text');
+  //   }
+  // };
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+    setExtractedTexts({});
   };
 
   const handleClose = () => {
@@ -193,7 +228,11 @@ const DetailPanel = ({
             >
               {sentEmails.length > 0 && (
                 <button
-                  className={`${activeTab === "sent" ? "text-white bg-[#262626]" : "text-[#adadad]"}`}
+                  className={`${
+                    activeTab === "sent"
+                      ? "text-white bg-[#262626]"
+                      : "text-[#adadad]"
+                  }`}
                   style={{ padding: "15px 30px" }}
                   onClick={() => handleTabChange("sent")}
                 >
@@ -204,8 +243,12 @@ const DetailPanel = ({
               {/* <button style={{padding:"30px", color:"#adadad"}} onClick={() => handleTabChange("received")}>Sent Emails</button> */}
               {receivedEmails.length > 0 && (
                 <button
-                className={`${activeTab === "received" ? "text-white bg-[#262626]" : "text-[#adadad]"}`}
-                style={{ padding: "15px 30px" }}
+                  className={`${
+                    activeTab === "received"
+                      ? "text-white bg-[#262626]"
+                      : "text-[#adadad]"
+                  }`}
+                  style={{ padding: "15px 30px" }}
                   onClick={() => handleTabChange("received")}
                 >
                   Received Emails
@@ -246,14 +289,36 @@ const DetailPanel = ({
                       <a target="_blank" href={email["PDFLINK"]}>
                         View Pdf
                       </a>{" "}
-                      <br />
+                      <br/>
                       <strong style={{ color: "#fff" }}>
                         Complaint :{" "}
-                      </strong>{" "}
+                      </strong>
                       <a target="_blank" href={email["COMPLAINTS"]}>
                         View Complaint
                       </a>{" "}
                       <br />
+                      {`--------------------------------`}<br/>
+                      <strong style={{ color: "#fff" }}>Message : </strong>{""}
+                      <button
+                        onClick={() =>
+                          handleExtractText(
+                            `https://drive.google.com/uc?id=${
+                              email.PDFLINK.match(/\/d\/([a-zA-Z0-9_-]+)\//)[1]
+                            }`,
+                            index,
+                            "sent"
+                          )
+                        }
+                      >
+                         Show Full Message
+                      </button>
+                      {extractedTexts[`sent_${index}`] && (
+                        <div style={{background:"#000", padding:20, marginTop:10}}>{extractedTexts[`sent_${index}`]}</div>
+                      )}
+                      {currentlyExtractingEmailIndex === index &&
+                        loadingtext && <p>Loading . .</p>}
+                      <br />
+                      
                       {/* <hr style={{ margin: "30px 0px 30px 0px" }} />
                 <strong style={{ color: "#fff" }}>Message : </strong>
                 <div>
@@ -299,6 +364,27 @@ const DetailPanel = ({
                       <a target="_blank" href={email["Complaints"]}>
                         View Complaint
                       </a>{" "}
+                      <br />
+                      {`--------------------------------`}<br/>
+                      <strong style={{ color: "#fff" }}>Message : </strong>{""}
+                      <button
+                        onClick={() =>
+                          handleExtractText(
+                            `https://drive.google.com/uc?id=${
+                              email.PDFLINK.match(/\/d\/([a-zA-Z0-9_-]+)\//)[1]
+                            }`,
+                            index,
+                            "sent"
+                          )
+                        }
+                      >
+                         Show Full Message
+                      </button>
+                      {extractedTexts[`sent_${index}`] && (
+                        <div style={{background:"#000", padding:20, marginTop:10}}>{extractedTexts[`sent_${index}`]}</div>
+                      )}
+                      {currentlyExtractingEmailIndex === index &&
+                        loadingtext && <p>Loading . .</p>}
                       <br />
                       {/* <hr style={{ margin: "30px 0px 30px 0px" }} />
                 <strong style={{ color: "#fff" }}>Message : </strong>

@@ -1,22 +1,26 @@
-// // pages/api/extract-pdf.js
-// import extractTextFromPDF from '../../utils/pdfParser';
+import { NextApiRequest, NextApiResponse } from 'next';
+import axios from 'axios';
+import pdf from 'pdf-parse';
 
-// export default async function handler(req, res) {
-//   if (req.method !== 'POST') {
-//     return res.status(405).end(); // Method Not Allowed
-//   }
+export default async function handler(req,res) {
+  if (req.method === 'POST') {
+    try {
+      const { pdfUrl } = req.body;
 
-//   const { pdfUrl } = req.body;
+      // Fetch the PDF file
+      const response = await axios.get(pdfUrl, { responseType: 'arraybuffer' });
 
-//   if (!pdfUrl) {
-//     return res.status(400).json({ error: 'Missing pdfUrl in the request body' });
-//   }
+      // Convert the PDF buffer to text
+      const dataBuffer = response.data;
+      const data = new Uint8Array(dataBuffer);
+      const text = await pdf(data);
 
-//   const extractedText = await extractTextFromPDF(pdfUrl);
-
-//   if (extractedText) {
-//     res.status(200).json(extractedText);
-//   } else {
-//     res.status(500).json({ error: 'Error extracting text from the PDF' });
-//   }
-// }
+      res.status(200).json({ text: text.text });
+    } catch (error) {
+      console.error('Error extracting text:', error);
+      res.status(500).json({ error: 'Error extracting text' });
+    }
+  } else {
+    res.status(405).end('Method Not Allowed');
+  }
+}

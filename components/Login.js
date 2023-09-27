@@ -46,6 +46,7 @@ const Login = ({ onSuccess }) => {
             <input
               type="password"
               placeholder="Password"
+              autoComplete="current password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="px-4 py-2 w-64 bg-black border focus:border-white "
