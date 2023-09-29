@@ -3,6 +3,7 @@ import DefaultMessage from "./DefaultMessage";
 import LoadingComponent from "./LoadingComponent";
 import PDFViewer from "./PDFViewer";
 import { axiosRetry } from "./retryAxios"; // Import the axiosRetry function
+import copy from 'clipboard-copy';
 
 // const axios = require("axios")
 const DetailPanel = ({
@@ -24,6 +25,10 @@ const DetailPanel = ({
   // const [extractedText, setExtractedText] = useState('');
 
   const [combinedPdfLinks, setCombinedPdfLinks] = useState([]);
+  const [complaintLink, setComplaintLink] = useState("");
+  const [isCopied, setIsCopied] = useState(false)
+
+
 
   useEffect(() => {
     const combinedLinks = [
@@ -40,6 +45,7 @@ const DetailPanel = ({
           }`
       ),
     ];
+    setComplaintLink(`https://submit-to-justiceminds.vercel.app/${selectedData?.Name.replace(" ", "%20")}`)
     setCombinedPdfLinks(combinedLinks);
   }, [sentEmails, receivedEmails]);
 
@@ -99,6 +105,16 @@ const DetailPanel = ({
   const handleClose = () => {
     onClose(); // Call the onClose function from props to reset selectedData to null
   };
+  const handleCopy = () => {
+    copy(complaintLink) // Call the onClose function from props to reset selectedData to null
+    setIsCopied(true);
+
+  // Reset the copied state after a few seconds
+  setTimeout(() => {
+    setIsCopied(false);
+  }, 2000);
+  };
+  
 
   const handleToggleMessage = (email) => {
     setShowFullMessages((prevShowFullMessages) => {
@@ -173,6 +189,7 @@ const DetailPanel = ({
                 <span> {sentEmails?.length}</span>
               )}
             </p>
+            
             <p>
               <span style={{ color: "#adadad" }}>Email Received</span> :
               {loading ? (
@@ -207,6 +224,12 @@ const DetailPanel = ({
                 <span> {sentEmails[sentEmails.length - 1]?.SENT}</span>
               )}
             </p>
+            <br />
+            <div className="flex items-center">
+            <button className="text-white px-8 py-2 cursor-pointer bg-[#1d1d1d]" onClick={handleCopy}>Copy Incident Link</button>
+            <span className="text-green-600 px-2">{isCopied && <p>✅ Link copied to clipboard!</p>}</span>
+            </div>
+            <p className="text-gray-600">{complaintLink}</p>
           </>
         ) : (
           <>
