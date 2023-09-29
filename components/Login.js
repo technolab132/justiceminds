@@ -9,7 +9,7 @@ const Login = ({ onSuccess }) => {
   const handleLogin = () => {
     if (username === "jmadmin" && password === "Jmadmin123#") {
       // Set a cookie named "isLoggedIn" with value "true"
-      setCookie(null, "isLoggedIn", "true", { maxAge: 120 }); // Expires in 5 minutes
+      setCookie(null, "isLoggedIn", "true", { maxAge: 900 }); // Expires in 5 minutes
       onSuccess();
     } else {
       setErrorMessage("Invalid username or password");

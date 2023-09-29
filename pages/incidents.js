@@ -102,14 +102,14 @@ export default function Complaints() {
         <>
           <div className="flex justify-between items-center ">
             <div className="items-center absolute top-0 right-2">
-              <Link className="px-10 py-10" href={"/"}>{`< Back`}</Link>
-              <button className="px-5 py-10" style={{}} onClick={toggleSidebar}>
+              <Link className="mx-5 my-6 bg-black p-[15px]" href={"/"}>{`< Back`}</Link>
+              <button className="mx-5 my-6 bg-black p-[15px]" style={{}} onClick={toggleSidebar}>
                 {showSidebar ? `<Close Filter>` : `<Open Filter>`}
               </button>
               {showAll ? (
                 <>
                   <button
-                    className="px-5 py-10"
+                    className="mx-5 my-6 bg-black p-[15px]"
                     style={{}}
                     onClick={handleCloseShowAll}
                   >
@@ -119,7 +119,7 @@ export default function Complaints() {
               ) : (
                 <>
                   <button
-                    className="px-5 py-10"
+                    className="mx-5 my-6 bg-black p-[15px]"
                     style={{}}
                     onClick={handleShowAll}
                   >
@@ -153,7 +153,7 @@ export default function Complaints() {
             ) : (
               <div className="flex-grow md:w-2/3 lg:w-3/4">
                 {selectedName ? (
-                  <section className="text-gray-400 body-font overflow-hidden">
+                  <section className="text-gray-400 body-font overflow-y-scroll" style={{height:"100vh"}}>
                     <div className="container px-5 pt-24 mx-auto">
                       <div className="mt-2">
                         <>
@@ -246,7 +246,7 @@ export default function Complaints() {
                         </div>
                       </div>
                     ) : (
-                      <section className="text-gray-400 body-font overflow-hidden">
+                      <section className="text-gray-400 body-font overflow-y-scroll" style={{height:"100vh"}}>
                         <div className="container px-5 pt-24 mx-auto">
                           <div className="mt-2">
                             <>
