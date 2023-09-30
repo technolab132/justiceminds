@@ -6,6 +6,11 @@ import { parse } from "cookie";
 import Link from "next/link";
 import FilterSidebar from "@/components/FilterSidebar";
 import DefaultMessage from "@/components/DefaultMessage";
+import dynamic from "next/dynamic";
+
+// Replace the original import with a dynamic import
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import "react-quill/dist/quill.bubble.css";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
@@ -102,8 +107,15 @@ export default function Complaints() {
         <>
           <div className="flex justify-between items-center ">
             <div className="items-center absolute top-0 right-2">
-              <Link className="mx-5 my-6 bg-black p-[15px]" href={"/"}>{`< Back`}</Link>
-              <button className="mx-5 my-6 bg-black p-[15px]" style={{}} onClick={toggleSidebar}>
+              <Link
+                className="mx-5 my-6 bg-black p-[15px]"
+                href={"/"}
+              >{`< Back`}</Link>
+              <button
+                className="mx-5 my-6 bg-black p-[15px]"
+                style={{}}
+                onClick={toggleSidebar}
+              >
                 {showSidebar ? `<Close Filter>` : `<Open Filter>`}
               </button>
               {showAll ? (
@@ -153,7 +165,10 @@ export default function Complaints() {
             ) : (
               <div className="flex-grow md:w-2/3 lg:w-3/4">
                 {selectedName ? (
-                  <section className="text-gray-400 body-font overflow-y-scroll" style={{height:"100vh"}}>
+                  <section
+                    className="text-gray-400 body-font overflow-y-scroll"
+                    style={{ height: "100vh" }}
+                  >
                     <div className="container px-5 pt-24 mx-auto">
                       <div className="mt-2">
                         <>
@@ -188,12 +203,10 @@ export default function Complaints() {
                                     </div>
                                   </div>
 
-                                  <div className=" md:mb-0 mb-6 w-3/4">
-                                    <div>
-                                      <p className="leading-relaxed text-justify">
-                                        {comp.complaint_text}
-                                      </p>
-                                    </div>
+                                  <div className=" md:mb-0 mb-6 w-3/4 ">
+                                    {/* <div> */}
+                                    <div dangerouslySetInnerHTML={{ __html: (comp.complaint_text) }}></div>
+                                    {/* </div> */}
                                   </div>
 
                                   <div className="w-44 text-right">
@@ -246,7 +259,10 @@ export default function Complaints() {
                         </div>
                       </div>
                     ) : (
-                      <section className="text-gray-400 body-font overflow-y-scroll" style={{height:"100vh"}}>
+                      <section
+                        className="text-gray-400 body-font overflow-y-scroll"
+                        style={{ height: "100vh" }}
+                      >
                         <div className="container px-5 pt-24 mx-auto">
                           <div className="mt-2">
                             <>
@@ -282,11 +298,7 @@ export default function Complaints() {
                                       </div>
 
                                       <div className=" md:mb-0 mb-6 w-3/4">
-                                        <div>
-                                          <p className="leading-relaxed text-justify">
-                                            {comp.complaint_text}
-                                          </p>
-                                        </div>
+                                      <div dangerouslySetInnerHTML={{ __html: (comp.complaint_text) }}></div>
                                       </div>
 
                                       <div className="w-44 text-right">

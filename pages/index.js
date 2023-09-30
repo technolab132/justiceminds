@@ -19,7 +19,9 @@ export default function Home() {
 
   const [sentEmails, setSentEmails] = useState([]);
   const [receivedEmails, setReceivedEmails] = useState([]);
+  const [incident, setIncident] = useState([]);
   const [extractedTexts, setExtractedTexts] = useState({});
+  const [extractedUrls, setExtractedUrls] = useState([]);
   const [loadingtext, setLoadingText] = useState(false);
   const [currentlyExtractingEmailIndex, setCurrentlyExtractingEmailIndex] =
     useState(-1);
@@ -89,6 +91,12 @@ export default function Home() {
 
       if (response.status === 200) {
         const { text } = response.data;
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+        // Extract URLs using the regular expression
+        const urls = text?.match(urlRegex);
+        setExtractedUrls(urls);
+
         setExtractedTexts((prevTexts) => ({
           ...prevTexts,
           [`${type}_${index}`]: text,
@@ -146,6 +154,10 @@ export default function Home() {
     //   .from('Chats')
     //   .select('*')
     //   .eq('Chat Session', selectedRow.Name); // Assuming 'Email' is the column name that links data between the tables
+    const { data: IncidentData, error: incidenterror } = await supabase
+      .from("Complaints")
+      .select("*")
+      .eq("complaint_for", selectedRow.Name);
 
     if (semailError) {
       console.error("sentmaail", semailError);
@@ -155,6 +167,10 @@ export default function Home() {
       console.error("receivedmaail", remailError);
       return;
     }
+    if (incidenterror) {
+      console.error("incidenterror", incidenterror);
+      return;
+    }
     // if (messageError) {
     //   console.error("messageerror", messageError);
     //   return;
@@ -162,6 +178,7 @@ export default function Home() {
 
     setSentEmails(SentEmails);
     setReceivedEmails(ReceivedEmails);
+    setIncident(IncidentData);
     // setMessages(Messages)
     setisLoading(false);
 
@@ -231,9 +248,11 @@ export default function Home() {
                 loading={isLoading}
                 extractedTexts={extractedTexts}
                 setExtractedTexts={setExtractedTexts}
+                extractedUrls={extractedUrls}
                 handleExtractText={handleExtractText}
                 loadingtext={loadingtext}
                 currentlyExtractingEmailIndex={currentlyExtractingEmailIndex}
+                incident={incident}
               />
             ) : (
               <>
