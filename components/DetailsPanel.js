@@ -301,6 +301,19 @@ const DetailPanel = ({
                   All Pdf Links
                 </button>
               )}
+              {(sentEmails.length > 0 || receivedEmails.length > 0) && (
+                <button
+                  className={`${
+                    activeTab === "innerlinks"
+                      ? "text-white bg-[#262626]"
+                      : "text-[#adadad]"
+                  }`}
+                  style={{ padding: "15px 30px" }}
+                  onClick={() => handleTabChange("innerlinks")}
+                >
+                  All Inner Links
+                </button>
+              )}
               {incident.length > 0 && (
                 <button
                   className={`${
@@ -380,13 +393,13 @@ const DetailPanel = ({
                             marginTop: 10,
                           }}
                         >
-                          {extractedUrls ? (
+                          {extractedUrls[`sent_${index}`] ? (
                             <>
                               <p className="text-green-500 text-xl">
                                 Links Found in the Mail . . .
                               </p>
                               {`------------------`}
-                              {extractedUrls?.map((url) => (
+                              {extractedUrls[`sent_${index}`]?.map((url) => (
                                 <pre
                                   style={{
                                     whiteSpace: "pre-wrap",
@@ -496,13 +509,13 @@ const DetailPanel = ({
                             marginTop: 10,
                           }}
                         >
-                          {extractedUrls ? (
+                          {extractedUrls[`received_${index}`] ? (
                             <>
                               <p className="text-xl text-green-500">
                                 Links Found in the Mail . . .
                               </p>
                               {`------------------`}
-                              {extractedUrls?.map((url) => (
+                              {extractedUrls[`received_${index}`]?.map((url) => (
                                 <pre
                                   style={{
                                     whiteSpace: "pre-wrap",
@@ -561,7 +574,7 @@ const DetailPanel = ({
                       <p className="p-3 text-green-500">Sent</p>
                       {sentEmails.map((email, index) => (
                         <>
-                          <tr className="">
+                          <tr key={index} className="">
                             <td className="p-3 text-gray-400">
                               {email["SENT"]}
                             </td>
@@ -597,6 +610,86 @@ const DetailPanel = ({
                     </div> */}
                     <br />
                   </>
+                </ul>
+              )}
+              {activeTab === "innerlinks" && (
+                <ul className="">
+                  {sentEmails.map((email, index) => (
+                    <li
+                      style={{
+                        padding: "20px",
+                        marginBottom: "",
+                        // background: "#262626",
+                        color: "#adadad",
+                      }}
+                      key={index}
+                    >
+                      {`--------------------------------`}
+                      <br />
+                      <strong style={{ color: "#fff" }}>SENT : </strong>
+                      {""}{email.SUBJECT}<br />
+                      <button
+                        onClick={() =>
+                          handleExtractText(
+                            `https://drive.google.com/uc?id=${
+                              email.PDFLINK.match(/\/d\/([a-zA-Z0-9_-]+)\//)[1]
+                            }`,
+                            index,
+                            "inner"
+                          )
+                        }
+                      >
+                        View All Links Found . .
+                      </button>
+                      {extractedTexts[`inner_${index}`] && (
+                        <div
+                          style={{
+                            background: "#1d1d1d",
+                            padding: 20,
+                            marginTop: "",
+                          }}
+                        >
+                          {extractedUrls[`inner_${index}`] ? (
+                            <>
+                              <p className="text-xl text-green-500">
+                                Links Found in the Mail . . .
+                              </p>
+                              {`------------------`}
+                              {extractedUrls[`inner_${index}`]?.map((url) => (
+                                <pre
+                                  style={{
+                                    whiteSpace: "pre-wrap",
+                                    color: "#fff",
+                                  }}
+                                >
+                                  <a
+                                    target="_blank"
+                                    className="underline"
+                                    href={url}
+                                  >
+                                    {url}
+                                  </a>
+                                  <br />
+                                </pre>
+                              ))}
+                              {`------------------`}
+                            </>
+                          ) : (
+                            <>
+                            <p className="text-xl text-yellow-500">No Inner Links Found . . .</p>{`------------------`}</>
+                          )}
+                        </div>
+                      )}
+                      {currentlyExtractingEmailIndex === index &&
+                        loadingtext && <p>Loading . .</p>}
+                      <br />
+                      {/* <hr style={{ margin: "30px 0px 30px 0px" }} />
+                <strong style={{ color: "#fff" }}>Message : </strong>
+                <div>
+                  {getEmailContent(email["MESSAGE"])}
+                </div> */}
+                    </li>
+                  ))}
                 </ul>
               )}
               {activeTab === "incidents" && (

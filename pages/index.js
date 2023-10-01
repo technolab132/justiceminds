@@ -21,7 +21,7 @@ export default function Home() {
   const [receivedEmails, setReceivedEmails] = useState([]);
   const [incident, setIncident] = useState([]);
   const [extractedTexts, setExtractedTexts] = useState({});
-  const [extractedUrls, setExtractedUrls] = useState([]);
+  const [extractedUrls, setExtractedUrls] = useState({});
   const [loadingtext, setLoadingText] = useState(false);
   const [currentlyExtractingEmailIndex, setCurrentlyExtractingEmailIndex] =
     useState(-1);
@@ -95,8 +95,14 @@ export default function Home() {
 
         // Extract URLs using the regular expression
         const urls = text?.match(urlRegex);
-        setExtractedUrls(urls);
+        // setExtractedUrls(urls);
+        
 
+        setExtractedUrls((prevTexts) => ({
+          ...prevTexts,
+          [`${type}_${index}`]: urls,
+        }));
+        console.log(urls);
         setExtractedTexts((prevTexts) => ({
           ...prevTexts,
           [`${type}_${index}`]: text,
