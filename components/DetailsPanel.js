@@ -627,7 +627,83 @@ const DetailPanel = ({
                       {`--------------------------------`}
                       <br />
                       <strong style={{ color: "#fff" }}>SENT : </strong>
-                      {""}{email.SUBJECT}<br />
+                      {""}<a href={email.PDFLINK}>{email.SUBJECT}</a><br />
+                      <button
+                        onClick={() =>
+                          handleExtractText(
+                            `https://drive.google.com/uc?id=${
+                              email.PDFLINK.match(/\/d\/([a-zA-Z0-9_-]+)\//)[1]
+                            }`,
+                            index,
+                            "inner"
+                          )
+                        }
+                      >
+                        View All Links Found . .
+                      </button>
+                      {extractedTexts[`inner_${index}`] && (
+                        <div
+                          style={{
+                            background: "#1d1d1d",
+                            padding: 20,
+                            marginTop: "",
+                          }}
+                        >
+                          {extractedUrls[`inner_${index}`] ? (
+                            <>
+                              <p className="text-xl text-green-500">
+                                Links Found in the Mail . . .
+                              </p>
+                              {`------------------`}
+                              {extractedUrls[`inner_${index}`]?.map((url) => (
+                                <pre
+                                  style={{
+                                    whiteSpace: "pre-wrap",
+                                    color: "#fff",
+                                  }}
+                                >
+                                  <a
+                                    target="_blank"
+                                    className="underline"
+                                    href={url}
+                                  >
+                                    {url}
+                                  </a>
+                                  <br />
+                                </pre>
+                              ))}
+                              {`------------------`}
+                            </>
+                          ) : (
+                            <>
+                            <p className="text-xl text-yellow-500">No Inner Links Found . . .</p>{`------------------`}</>
+                          )}
+                        </div>
+                      )}
+                      {currentlyExtractingEmailIndex === index &&
+                        loadingtext && <p>Loading . .</p>}
+                      <br />
+                      {/* <hr style={{ margin: "30px 0px 30px 0px" }} />
+                <strong style={{ color: "#fff" }}>Message : </strong>
+                <div>
+                  {getEmailContent(email["MESSAGE"])}
+                </div> */}
+                    </li>
+                  ))}
+                  {receivedEmails.map((email, index) => (
+                    <li
+                      style={{
+                        padding: "20px",
+                        marginBottom: "",
+                        // background: "#262626",
+                        color: "#adadad",
+                      }}
+                      key={index}
+                    >
+                      {`--------------------------------`}
+                      <br />
+                      <strong style={{ color: "#fff" }}>RECEIVED : </strong>
+                      {""}<a href={email.PDFLINK}>{email.SUBJECT}</a><br />
                       <button
                         onClick={() =>
                           handleExtractText(
